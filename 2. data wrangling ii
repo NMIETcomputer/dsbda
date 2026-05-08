@@ -1,0 +1,69 @@
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+import seaborn as sns
+
+# Create a dictionary with student data
+data = {
+    'Student_ID': [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
+    'Name': ['Amit', 'Sunita', 'Anjali', 'Vijay', 'Rahul', 'Snehal', 'Priya', 'Amit', 'Swaraj', 'Amol'],
+    'Gender': ['M', 'F', 'f', 'M', 'm', 'F', 'F', 'M', 'M', 'M'], # Inconsistent labels
+    'Math_Score': [85, 90, np.nan, 88, 300, 75, 82, 85, 91, 78], # Outlier (300) and Missing
+    'Science_Score': [70, 75, 80, 500, 85, 90, np.nan, 72, 88, 81], # Outlier (500) and Missing
+    'Attendance': [95, 80, 85, 90, 70, 60, 100, 85, 5, 92] # Outlier (5)
+}
+
+df = pd.DataFrame(data)
+print("Initial Dataset:\n", df)
+
+# Detecting outliers using IQR for Math_Score
+Q1 = df['Math_Score'].quantile(0.25)
+Q3 = df['Math_Score'].quantile(0.75)
+IQR = Q3 - Q1
+lower_bound = Q1 - 1.5 * IQR
+upper_bound = Q3 + 1.5 * IQR
+
+print(f"\nMath Score Bounds: {lower_bound} to {upper_bound}")
+
+# Filtering out the outliers (Example: replacing 300 with the median)
+df.loc[df['Math_Score'] > 100, 'Math_Score'] = df['Math_Score'].median()
+df.loc[df['Science_Score'] > 100, 'Science_Score'] = df['Science_Score'].median()
+
+print("\nCleaned Scores:\n", df[['Math_Score', 'Science_Score']])
+
+# Check for skewness
+print("\nSkewness of Attendance:", df['Attendance'].skew())
+
+# Apply Log Transformation to reduce skewness
+# We use log1p (log(1+x)) to avoid issues with zero
+df['Attendance_Log'] = np.log1p(df['Attendance'])
+
+# Visualization
+plt.subplot(1, 2, 1) # Create a grid with 1 row and 2 columns, and put the next plot in the first (1st) position.
+sns.histplot(df['Attendance'], kde=True)
+plt.title('Original Attendance')
+
+plt.subplot(1, 2, 2) # Create a grid with 1 row and 2 columns, and put the next plot in the first (2nd) position.
+sns.histplot(df['Attendance_Log'], kde=True)
+plt.title('Log Transformed Attendance')
+plt.show()
+
+# 1. Check original skewness
+print("Original Skewness:", df['Attendance'].skew())
+
+# 2. Apply Cube Transformation (Best for Negative Skew)
+df['Attendance_Cube'] = df['Attendance']**3
+
+# 3. Check new skewness
+print("New Skewness (Cube):", df['Attendance_Cube'].skew())
+
+# Visualization
+plt.subplot(1, 2, 1) # Create a grid with 1 row and 2 columns, and put the next plot in the first (1st) position.
+sns.histplot(df['Attendance'], kde=True)
+plt.title('Original Attendance')
+
+plt.subplot(1, 2, 2) # Create a grid with 1 row and 2 columns, and put the next plot in the first (2nd) position.
+sns.histplot(df['Attendance_Cube'], kde=True)
+plt.title('Log Transformed Attendance')
+plt.show()
+
