@@ -1,0 +1,44 @@
+#importing basic libraries
+import pandas as pd
+import numpy as np
+
+#Loading the dataset
+df = pd.read_csv("/content/drive/MyDrive/NMIET/AY2025-26/Even/DSBDA/DSBDA For Students/Titanic.csv")
+
+from google.colab import drive
+drive.mount('/content/drive')
+
+df.head(10)
+
+df.info()
+
+#checking missing/null values
+df.isnull().sum()
+
+print("Descriptive Statistics:\n", df.describe(include='all'))
+
+# Fill missing Age values with the Median
+df['Age'] = df['Age'].fillna(df['Age'].median())
+
+df.isnull().sum()
+
+print("Descriptive Statistics:\n", df.describe(include='all'))
+
+#Data Formating and normalization
+# Convert to categories
+df['Sex'] = df['Sex'].astype('category')
+df['Embarked'] = df['Embarked'].astype('category')
+
+# Normalization of 'Fare'
+# Fill the 1 missing value in Fare with the median first
+df['Fare'] = df['Fare'].fillna(df['Fare'].median())
+df['Fare_Normalized'] = (df['Fare'] - df['Fare'].min()) / (df['Fare'].max() - df['Fare'].min())
+
+df.head()
+
+# Converting 'Sex' and 'Embarked' into binary indicator variables
+# drop_first=True is used to avoid multi-collinearity (the dummy variable trap)
+df_final = pd.get_dummies(df, columns=['Sex', 'Embarked'], drop_first=True)
+
+# Showing the first 5 rows of the final processed data
+print(df_final.head())
