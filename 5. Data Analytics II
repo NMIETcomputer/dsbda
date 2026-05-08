@@ -1,0 +1,49 @@
+import pandas as pd
+import numpy as np
+from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import StandardScaler
+from sklearn.linear_model import LogisticRegression
+from sklearn.metrics import confusion_matrix, accuracy_score, precision_score, recall_score
+
+# 1. Load the dataset
+# Replace the path with your local file path or a raw URL
+dataset = pd.read_csv('/content/drive/MyDrive/NMIET/AY2025-26/Even/DSBDA/DSBDA For Students/Social_Network_Ads.csv')
+
+# Feature Selection (Age and EstimatedSalary are usually at index 2 and 3)
+X = dataset.iloc[:, [2, 3]].values
+y = dataset.iloc[:, 4].values
+
+# 2. Splitting the dataset into Training and Test sets
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.25, random_state=0)
+
+# 3. Feature Scaling (Highly recommended for Logistic Regression)
+sc = StandardScaler()
+X_train = sc.fit_transform(X_train)
+X_test = sc.transform(X_test)
+
+# 4. Fitting Logistic Regression to the Training set
+classifier = LogisticRegression(random_state=0)
+classifier.fit(X_train, y_train)
+
+# 5. Predicting the Test set results
+y_pred = classifier.predict(X_test)
+
+# 6. Computing Confusion Matrix and Performance Metrics
+cm = confusion_matrix(y_test, y_pred)
+TN, FP, FN, TP = cm.ravel()
+
+# Calculating Metrics
+accuracy = accuracy_score(y_test, y_pred)
+error_rate = 1 - accuracy
+precision = precision_score(y_test, y_pred)
+recall = recall_score(y_test, y_pred)
+
+print(f"Confusion Matrix:\n{cm}")
+print(f"True Positives (TP): {TP}")
+print(f"False Positives (FP): {FP}")
+print(f"True Negatives (TN): {TN}")
+print(f"False Negatives (FN): {FN}")
+print(f"Accuracy: {accuracy:.4f}")
+print(f"Error Rate: {error_rate:.4f}")
+print(f"Precision: {precision:.4f}")
+print(f"Recall: {recall:.4f}")
