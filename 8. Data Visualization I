@@ -1,0 +1,29 @@
+# Step 1: Import Libraries
+import seaborn as sns
+import matplotlib.pyplot as plt
+import pandas as pd
+
+# Step 2: Load Inbuilt Titanic Dataset
+df = sns.load_dataset('titanic')
+
+# Step 3: Basic Info
+print("Shape of Dataset:", df.shape)
+print("\nFirst 5 Rows:")
+print(df.head())
+
+print("\nColumn Names:")
+print(df.columns.tolist())
+
+print("\nMissing Values:")
+print(df.isnull().sum())
+
+# Step 4: Plot Histogram of 'fare'
+plt.figure(figsize=(10, 6))
+sns.histplot(data=df, x='fare', bins=40, kde=True, color='steelblue')
+
+plt.title('Distribution of Ticket Fare - Titanic', fontsize=15)
+plt.xlabel('Fare (Ticket Price)', fontsize=12)
+plt.ylabel('Number of Passengers', fontsize=12)
+
+plt.tight_layout()
+plt.show()
