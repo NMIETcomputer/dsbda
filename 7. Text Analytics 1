@@ -1,0 +1,65 @@
+import nltk
+nltk.download('punkt')
+nltk.download('averaged_perceptron_tagger')
+nltk.download('stopwords')
+nltk.download('wordnet')
+nltk.download('punkt_tab')
+nltk.download('averaged_perceptron_tagger_eng')
+
+from nltk.tokenize import word_tokenize, sent_tokenize
+from nltk.tag import pos_tag
+from nltk.corpus import stopwords
+from nltk.stem import PorterStemmer, WordNetLemmatizer
+from sklearn.feature_extraction.text import TfidfVectorizer
+import pandas as pd
+
+
+document = """
+Natural Language Processing is a subfield of artificial intelligence.
+It helps computers understand human language.
+Machine learning and deep learning are used in NLP tasks.
+Text analytics involves tokenization, stemming, and lemmatization.
+"""
+
+# Sentence Tokenization
+sent_tokens = sent_tokenize(document)
+print("Sentence Tokens:\n", sent_tokens)
+
+# Word Tokenization
+word_tokens = word_tokenize(document)
+print("\nWord Tokens:\n", word_tokens)
+
+#POS Tagging
+pos_tags = pos_tag(word_tokens)
+print("\nPOS Tags:\n", pos_tags)
+
+#Stop Words Removal
+stop_words = set(stopwords.words('english'))
+filtered_words = [w for w in word_tokens if w.lower() not in stop_words and w.isalpha()]
+print("\nAfter Stop Words Removal:\n", filtered_words)
+
+#Stemming
+stemmer = PorterStemmer()
+stemmed_words = [stemmer.stem(w) for w in filtered_words]
+print("\nStemmed Words:\n", stemmed_words)
+
+#Lemmatization
+lemmatizer = WordNetLemmatizer()
+lemmatized_words = [lemmatizer.lemmatize(w) for w in filtered_words]
+print("\nLemmatized Words:\n", lemmatized_words)
+
+
+#TF-IDF (Term Frequency - Inverse Document Frequency)
+# Use sentences as individual documents
+sentences = sent_tokenize(document)
+
+vectorizer = TfidfVectorizer()
+tfidf_matrix = vectorizer.fit_transform(sentences)
+
+tfidf_df = pd.DataFrame(
+    tfidf_matrix.toarray(),
+    columns=vectorizer.get_feature_names_out()
+)
+
+print("\nTF-IDF Matrix:\n")
+print(tfidf_df)
