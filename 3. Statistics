@@ -1,0 +1,21 @@
+import pandas as pd
+# Load dataset(no headerin file)
+df = pd.read_csv("iris_dataset.csv", header=None)
+# Assign proper column names
+df.columns = ['sepal_length', 'sepal_width', 'petal_length', 'petal_width', 'species']
+# Display first 5 rows
+print("First 5 rows of dataset:\n") 
+print(df.head())
+print("\nSummary Statistics Grouped by Species:\n")
+grouped_stats = df.groupby('species').agg(['mean', 'median', 'min', 'max', 'std']) 
+print(grouped_stats)
+print("\nList of Petal Length values for each species:\n")
+species_lists = df.groupby('species')['petal_length'].apply(list) 
+print(species_lists)
+print("\nPercentiles (25%, 50%, 75%) for each species:\n")
+percentiles = df.groupby('species').quantile([0.25, 0.5, 0.75]) 
+print(percentiles)
+
+print("\nDetailed Statistical Description:\n")
+description = df.groupby('species').describe() 
+print(description)
