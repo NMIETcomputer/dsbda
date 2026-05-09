@@ -1,0 +1,30 @@
+# Import required libraries
+import seaborn as sns
+import matplotlib.pyplot as plt
+
+# Load the inbuilt Titanic dataset from seaborn
+df = sns.load_dataset('titanic')
+
+# Create a figure with specified size
+plt.figure(figsize=(10, 6))
+
+# Plot a boxplot:
+# x='sex'      -> Gender on x-axis (male/female)
+# y='age'      -> Age on y-axis
+# hue='survived' -> Color split based on survival (0=No, 1=Yes)
+# palette      -> Red for not survived, Blue for survived
+sns.boxplot(data=df, x='sex', y='age', hue='survived', palette={0:'salmon', 1:'skyblue'})
+
+# Add title and axis labels
+plt.title('Distribution of Age by Gender and Survival - Titanic', fontsize=15)
+plt.xlabel('Gender', fontsize=12)
+plt.ylabel('Age', fontsize=12)
+
+# Add legend to explain the colors
+plt.legend(title='Survived', labels=['Did Not Survive (0)', 'Survived (1)'])
+
+# Adjust layout so nothing gets cut off
+plt.tight_layout()
+
+# Display the plot
+plt.show()
