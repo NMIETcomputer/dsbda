@@ -1,0 +1,66 @@
+# Import required libraries
+import seaborn as sns
+import matplotlib.pyplot as plt
+import pandas as pd
+
+# Load the inbuilt Iris dataset from seaborn (no CSV/Kaggle needed)
+df = sns.load_dataset('iris')
+
+# -------------------------------------------------------
+# 1. SCAN THE DATASET - Features and their types
+# -------------------------------------------------------
+
+print("Shape of Dataset:", df.shape)
+print("\nFirst 5 Rows:\n", df.head())
+
+# Check data types of each column (numeric or nominal)
+print("\nData Types of Each Feature:")
+print(df.dtypes)
+
+# Summary statistics for numeric features
+print("\nStatistical Summary:")
+print(df.describe())
+
+# 'species' is nominal (categorical), rest are numeric
+print("\nNumber of Features (excluding target):", len(df.columns) - 1)
+print("Numeric Features:", df.select_dtypes(include='number').columns.tolist())
+print("Nominal Features:", df.select_dtypes(include='object').columns.tolist())
+
+# -------------------------------------------------------
+# 2. HISTOGRAM FOR EACH FEATURE
+# -------------------------------------------------------
+
+# Get only numeric columns
+numeric_cols = df.select_dtypes(include='number').columns
+
+# Create a subplot for each numeric feature
+plt.figure(figsize=(12, 8))
+for i, col in enumerate(numeric_cols):
+    plt.subplot(2, 2, i+1)                          # 2x2 grid of plots
+    sns.histplot(data=df, x=col, hue='species',     # Color by species
+                 kde=True, bins=20)
+    plt.title(f'Histogram of {col}', fontsize=12)
+    plt.xlabel(col)
+    plt.ylabel('Count')
+
+plt.suptitle('Feature Distributions - Iris Dataset', fontsize=15)
+plt.tight_layout()
+plt.show()
+
+# -------------------------------------------------------
+# 3. BOXPLOT FOR EACH FEATURE
+# -------------------------------------------------------
+
+# Create a subplot boxplot for each numeric feature
+plt.figure(figsize=(12, 8))
+for i, col in enumerate(numeric_cols):
+    plt.subplot(2, 2, i+1)                          # 2x2 grid of plots
+    sns.boxplot(data=df, x='species', y=col,        # Group by species
+                palette='Set2')
+    plt.title(f'Boxplot of {col}', fontsize=12)
+    plt.xlabel('Species')
+    plt.ylabel(col)
+
+plt.suptitle('Feature Boxplots - Iris Dataset', fontsize=15)
+plt.tight_layout()
+plt.show()
