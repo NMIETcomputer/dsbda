@@ -1,3 +1,62 @@
+Perfect! Here's the exact step by step guide matching that video:
+
+---
+
+## PRACTICAL 11 - WordCount using Hadoop MapReduce
+
+### STEP 1: Start Hadoop
+```bash
+start-dfs.sh
+```
+Then verify:
+```bash
+jps
+```
+Should show: `NameNode`, `DataNode`, `SecondaryNameNode`
+
+---
+
+### STEP 2: Create Input File
+```bash
+# Create a folder locally
+mkdir -p ~/wordcount/input
+
+# Create input text file
+nano ~/wordcount/input/input.txt
+```
+Type this inside and save **(Ctrl+X → Y → Enter)**:
+```
+Hello World
+Hello Hadoop
+Hadoop is great
+MapReduce is powerful
+Hello MapReduce
+```
+
+---
+
+### STEP 3: Create HDFS Directory and Upload File
+```bash
+# Create directory in HDFS
+hdfs dfs -mkdir -p /user/hadoop/wordcount/input
+
+# Upload input file to HDFS
+hdfs dfs -put ~/wordcount/input/input.txt /user/hadoop/wordcount/input/
+
+# Verify upload
+hdfs dfs -ls /user/hadoop/wordcount/input/
+```
+
+---
+
+### STEP 4: Create Java File
+```bash
+mkdir -p ~/wordcount/java
+cd ~/wordcount/java
+nano WordCount.java
+```
+Paste this and save **(Ctrl+X → Y → Enter)**:
+```java
 import java.io.IOException;
 import java.util.StringTokenizer;
 import org.apache.hadoop.conf.Configuration;
@@ -53,3 +112,66 @@ public class WordCount {
         System.exit(job.waitForCompletion(true) ? 0 : 1);
     }
 }
+```
+
+---
+
+### STEP 5: Compile and Create JAR
+```bash
+# Compile
+javac -classpath $(hadoop classpath) -d . WordCount.java
+
+# Create JAR file
+jar cf wordcount.jar WordCount*.class
+```
+
+---
+
+### STEP 6: Run the Hadoop Job
+```bash
+hadoop jar wordcount.jar WordCount \
+/user/hadoop/wordcount/input \
+/user/hadoop/wordcount/output
+```
+
+---
+
+### STEP 7: See Output
+```bash
+hdfs dfs -cat /user/hadoop/wordcount/output/part-r-00000
+```
+
+Expected output:
+```
+Hadoop      2
+Hello       3
+MapReduce   2
+World       1
+great       1
+is          2
+powerful    1
+```
+
+---
+
+## ⚠️ Common Errors & Fixes
+
+| Error | Fix |
+|-------|-----|
+| Output directory exists | `hdfs dfs -rm -r /user/hadoop/wordcount/output` |
+| Hadoop not started | Run `start-dfs.sh` again |
+| Java not found | Run `java -version` to check |
+| Permission denied | Run `chmod +x start-dfs.sh` |
+
+---
+
+## Quick Cheat Sheet 📋
+```
+start-dfs.sh                    → Start Hadoop
+hdfs dfs -mkdir -p /path        → Create HDFS folder
+hdfs dfs -put file /path        → Upload file
+hadoop jar x.jar Class in out   → Run job
+hdfs dfs -cat /path/part-r-*    → See output
+```
+
+Follow these exact steps in the lab and it will work! ✅
