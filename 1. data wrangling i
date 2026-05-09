@@ -3,10 +3,8 @@ import pandas as pd
 import numpy as np
 
 #Loading the dataset
-df = pd.read_csv("/content/drive/MyDrive/NMIET/AY2025-26/Even/DSBDA/DSBDA For Students/Titanic.csv")
+df = pd.read_csv("Titanic.csv")
 
-from google.colab import drive
-drive.mount('/content/drive')
 
 df.head(10)
 
