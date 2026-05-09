@@ -1,3 +1,53 @@
+Here's the complete step by step guide for Practical 12:
+
+---
+
+## STEP 1: Start Hadoop
+```bash
+start-dfs.sh
+jps
+```
+> Verify NameNode, DataNode are running ✅
+
+---
+
+## STEP 2: Create Log File
+```bash
+mkdir -p ~/logfile/input
+nano ~/logfile/input/system.log
+```
+Type this inside and save **(Ctrl+X → Y → Enter)**:
+```
+2024-01-01 10:00:00 ERROR Disk not found
+2024-01-01 10:05:00 INFO System started
+2024-01-02 11:00:00 ERROR Memory overflow
+2024-01-02 11:30:00 WARNING CPU usage high
+2024-01-03 09:00:00 INFO Backup completed
+2024-01-03 09:30:00 ERROR Network failure
+2024-01-03 10:00:00 INFO System running
+2024-01-04 08:00:00 WARNING Low disk space
+2024-01-04 08:30:00 ERROR Service crashed
+```
+
+---
+
+## STEP 3: Upload to HDFS
+```bash
+hdfs dfs -mkdir -p /user/hadoop/logfile/input
+hdfs dfs -put ~/logfile/input/system.log /user/hadoop/logfile/input/
+hdfs dfs -ls /user/hadoop/logfile/input/
+```
+
+---
+
+## STEP 4: Create Java File
+```bash
+mkdir -p ~/logfile/java
+cd ~/logfile/java
+nano LogAnalyzer.java
+```
+Paste this and save **(Ctrl+X → Y → Enter)**:
+```java
 import java.io.IOException;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.Path;
@@ -54,3 +104,61 @@ public class LogAnalyzer {
         System.exit(job.waitForCompletion(true) ? 0 : 1);
     }
 }
+```
+
+---
+
+## STEP 5: Compile and Create JAR
+```bash
+javac -classpath $(hadoop classpath) -d . LogAnalyzer.java
+jar cf loganalyzer.jar LogAnalyzer*.class
+```
+
+---
+
+## STEP 6: Run the Hadoop Job
+```bash
+hadoop jar loganalyzer.jar LogAnalyzer \
+/user/hadoop/logfile/input \
+/user/hadoop/logfile/output
+```
+
+---
+
+## STEP 7: View Output
+```bash
+hdfs dfs -cat /user/hadoop/logfile/output/part-r-00000
+```
+
+Expected output:
+```
+ERROR      4
+INFO       4
+WARNING    2
+```
+
+---
+
+## ⚠️ Common Errors and Fixes
+
+| Error | Fix |
+|-------|-----|
+| Output directory exists | `hdfs dfs -rm -r /user/hadoop/logfile/output` |
+| Hadoop not started | Run `start-dfs.sh` again |
+| Wrong column index | Check log format matches `parts[2]` |
+
+---
+
+## How it Works
+
+| Phase | What Happens |
+|-------|-------------|
+| **Input** | Each line of log file is read |
+| **Mapper** | Extracts 3rd word (ERROR/INFO/WARNING) and emits (logLevel, 1) |
+| **Shuffle** | Groups all same log levels together |
+| **Reducer** | Sums up counts for each log level |
+| **Output** | Final count of each log level |
+
+---
+
+Now do you want the **GitHub README version** of this practical too like the previous one? ✅
