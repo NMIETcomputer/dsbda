@@ -7,8 +7,8 @@ from sklearn.metrics import confusion_matrix, accuracy_score, precision_score, r
 
 # 1. Load the dataset
 # Replace the path with your local file path or a raw URL
-dataset = pd.read_csv('/content/drive/MyDrive/NMIET/AY2025-26/Even/DSBDA/DSBDA For Students/Social_Network_Ads.csv')
-
+dataset = pd.read_csv('Social_Network_Ads.csv')
+print(dataset.head())
 # Feature Selection (Age and EstimatedSalary are usually at index 2 and 3)
 X = dataset.iloc[:, [2, 3]].values
 y = dataset.iloc[:, 4].values
