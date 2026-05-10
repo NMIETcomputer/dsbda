@@ -20,7 +20,6 @@ print(df.isnull().sum())
 # Step 4: Plot Histogram of 'fare'
 plt.figure(figsize=(10, 6))
 sns.histplot(data=df, x='fare', bins=40, kde=True, color='steelblue')
-
 plt.title('Distribution of Ticket Fare - Titanic', fontsize=15)
 plt.xlabel('Fare (Ticket Price)', fontsize=12)
 plt.ylabel('Number of Passengers', fontsize=12)
